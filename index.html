@@ -157,5 +157,37 @@
     </a>
 
     <script src="script.js"></script>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const painelAlerta = document.getElementById('painel-alerta');
+        
+        if (painelAlerta) {
+            const paragrafoAlerta = painelAlerta.querySelector('p');
+            const btnFechar = document.getElementById('fechar-alerta');
+
+            // 1. Verifica se existe um alerta personalizado salvo no navegador
+            const alertaSalvo = localStorage.getItem('textoAlertaSindicato');
+            if (alertaSalvo) {
+                paragrafoAlerta.innerHTML = alertaSalvo;
+            }
+
+            // 2. Verifica se o visitante fechou o alerta recentemente
+            const alertaOcultado = localStorage.getItem('alertaOcultado');
+            if (alertaOcultado === 'true') {
+                painelAlerta.style.display = 'none';
+            }
+
+            // 3. Mantém o funcionamento do botão de fechar (X)
+            if (btnFechar) {
+                btnFechar.addEventListener('click', function() {
+                    painelAlerta.style.display = 'none';
+                    localStorage.setItem('alertaOcultado', 'true');
+                });
+            }
+        }
+    });
+</script>
+
 </body>
 </html>

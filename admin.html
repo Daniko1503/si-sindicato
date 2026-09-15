@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo Protegido - Sindicato</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .painel-container { width: 100%; max-width: 480px; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); box-sizing: border-box; }
+        h2 { margin-top: 0; color: #333; text-align: center; font-size: 22px; }
+        label { display: block; margin: 15px 0 5px; font-weight: bold; color: #555; }
+        input[type="password"], select, textarea { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+        textarea { resize: vertical; }
+        button { width: 100%; padding: 12px; background-color: #0056b3; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; transition: background 0.2s; }
+        button:hover { background-color: #004085; }
+        button:disabled { background-color: #aaa; cursor: not-allowed; }
+        .status-msg { margin-top: 15px; text-align: center; font-weight: bold; font-size: 14px; }
+        .link-voltar { display: block; text-align: center; margin-top: 20px; color: #666; text-decoration: none; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<div class="painel-container">
+    <h2>🔒 Painel Admin - Alertas</h2>
+    <form id="form-github-alerta">
+        <!-- Campo de Senha Obrigatório -->
+        <label for="senha-admin">Chave de Acesso:</label>
+        <input type="password" id="senha-admin" placeholder="Digite a senha de administrador" required>
+
+        <!-- Seleção de Nível/Cor do Alerta -->
+        <label for="tipo-alerta">Tipo e Cor do Alerta:</label>
+        <select id="tipo-alerta" required>
+            <option value="alerta-urgente">🚨 Vermelho (Urgente / Importante)</option>
+            <option value="alerta-informativo">ℹ️ Azul (Informativo / Geral)</option>
+            <option value="alerta-sucesso">✅ Verde (Comunicado / Concluído)</option>
+        </select>
+
+        <!-- Texto do Alerta -->
+        <label for="novo-texto-alerta">Texto do Alerta (HTML permitido):</label>
+        <textarea id="novo-texto-alerta" rows="5" placeholder="Ex: <strong>Assembleia:</strong> Quarta-feira às 18h30..." required></textarea>
+        
+        <button type="submit" id="btn-salvar">Publicar Alerta Permanentemente</button>
+    </form>
+    <div id="mensagem-status" class="status-msg"></div>
+    <a href="index.html" class="link-voltar">⬅ Voltar para o Site</a>
+</div>
+
+<script>
+    document.getElementById('form-github-alerta').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const btn = document.getElementById('btn-salvar');
+        const status = document.getElementById('mensagem-status');
+        
+        const senhaDigitada = document.getElementById('senha-admin').value;
+        const novaClasse = document.getElementById('tipo-alerta').value;
+        const novoTexto = document.getElementById('novo-texto-alerta').value;
+
+        // ⚙️ CONFIGURAÇÕES DE SEGURANÇA E REPOSITÓRIO
+        const SENHA_CORRETA = "4321"; // ⬅️ Defina aqui a sua senha do painel
+        const GITHUB_TOKEN = "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"; // ⬅️ Seu Token gerado no GitHub
+        const USERNAME = "daniko1503"; 
+        const REPO = "si-sindicato"; 
+        const FILE_PATH = "index.html";
+
+        // 1. Validação simples da senha
+        if (senhaDigitada !== SENHA_CORRETA) {
+            status.style.color = "red";
+            status.innerText = "❌ Senha incorreta! Alteração recusada.";
+            return;
+        }
+        
+        btn.disabled = true;
+        status.style.color = "blue";
+        status.innerText = "Conectando ao GitHub...";
+
+        try {
+            // 2. Buscar o arquivo index.html atual da nuvem
+            const url = `https://github.com{USERNAME}/${REPO}/contents/${FILE_PATH}`;
+            const response = await fetch(url, {
+                headers: { "Authorization": `token ${GITHUB_TOKEN}` }
+            });
+            
+            if (!response.ok) throw new Error("Não foi possível acessar o repositório.");
+            
+            const fileData = await response.json();
+            const rawContent = decodeURIComponent(escape(atob(fileData.content))); // Decodifica o código HTML atual
+            
+            // 3. Expressão regular inteligente para capturar a div e alterar a classe (cor) e o texto interno (<p>)
+            const regexCompleto = /(<div[^>]*id="painel-alerta"[^>]*>)/;
+            const regexTexto = /(<div[^>]*id="painel-alerta"[^>]*>[\s\S]*?<p>)([\s\S]*?)(<\/p>)/;
+            
+            if (!regexCompleto.test(rawContent) || !regexTexto.test(rawContent)) {
+                throw new Error("Não localizamos a estrutura '<div id=\"painel-alerta\">...<p>' no arquivo index.html.");
+            }
+            
+            // Subsitui a classe atual pela nova selecionada (muda a cor do painel)
+            let conteudoModificado = rawContent.replace(/class="[^"]*"\s+id="painel-alerta"/, `class="${novaClasse}" id="painel-alerta"`);
+            conteudoModificado = conteudoModificado.replace(/id="painel-alerta"\s+class="[^"]*"/, `id="painel-alerta" class="${novaClasse}"`);
+            
+            // Substitui o texto do comunicado interno
+            conteudoModificado = conteudoModificado.replace(regexTexto, `$1${novoTexto}$3`);
+
+            // 4. Enviar arquivo atualizado de volta realizando o Commit automático
+            const updateResponse = await fetch(url, {
+                method: "PUT",
+                headers: {
+                    "Authorization": `token ${GITHUB_TOKEN}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    message: "🚨 Alerta e estilo atualizados via Painel Admin",
+                    content: btoa(unescape(encodeURIComponent(conteudoModificado))),
+                    sha: fileData.sha
+                })
+            });
+
+            if (updateResponse.ok) {
+                status.style.color = "green";
+                status.innerText = "✅ Publicado com sucesso! O site foi alterado e a cor foi atualizada. Aguarde 1 minuto.";
+                document.getElementById('senha-admin').value = '';
+                document.getElementById('novo-texto-alerta').value = '';
+            } else {
+                throw new Error("Erro ao salvar atualizações no servidor do GitHub.");
+            }
+
+        } catch (error) {
+            status.style.color = "red";
+            status.innerText = "❌ Erro: " + error.message;
+        } finally {
+            btn.disabled = false;
+        }
+    });
+</script>
+
+</body>
+</html>

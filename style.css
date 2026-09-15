@@ -532,3 +532,196 @@ footer h3, footer h4 {
 .caixa-busca input:focus {
     border-color: #0d3b66;
 }
+
+/* Estilos do Formulário de Alerta */
+.container-alerta {
+    max-width: 500px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    font-family: Arial, sans-serif;
+}
+
+.container-alerta h2 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.campo-grupo {
+    margin-bottom: 15px;
+}
+
+.campo-grupo label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+.campo-grupo input, 
+.campo-grupo select, 
+.campo-grupo textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+.btn-enviar-alerta {
+    width: 100%;
+    padding: 12px;
+    background-color: #0056b3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-enviar-alerta:hover {
+    background-color: #004085;
+}
+
+/* Caixa de Exibição do Alerta Dinâmico */
+.alerta-box {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 4px;
+    border-left: 5px solid;
+}
+
+.alerta-box.urgente {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-left-color: #dc3545;
+}
+
+.alerta-box.informativo {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border-left-color: #17a2b8;
+}
+
+.alerta-box.sucesso {
+    background-color: #d4edda;
+    color: #155724;
+    border-left-color: #28a745;
+}
+
+.esconde {
+    display: none;
+}
+
+/* ==========================================================================
+   SISTEMA DE ALERTAS DINÂMICOS (PAINEL DO SINDICATO)
+   ========================================================================== */
+
+/* Estrutura base do painel (comum para todos os estados) */
+#painel-alerta {
+    width: 100%;
+    padding: 15px 0;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+/* Alinhamento do conteúdo interno */
+.alerta-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+/* O texto do comunicado */
+#painel-alerta p {
+    margin: 0;
+    flex-grow: 1;
+    padding: 0 20px;
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+/* A etiqueta em destaque (Badge) */
+.badge-alerta {
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.25);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Botão de fechar (X) */
+.btn-fechar-alerta {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.btn-fechar-alerta:hover {
+    opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   ESTILOS ESPECÍFICOS DE CORES (Injetados pelo Painel Oculto)
+   -------------------------------------------------------------------------- */
+
+/* 🚨 1. ALERTA URGENTE (Vermelho) */
+.alerta-urgente {
+    background-color: #f8d7da; /* Fundo vermelho claro suave */
+    color: #721c24;            /* Texto vermelho escuro para leitura */
+    border-bottom: 3px solid #dc3545;
+}
+.alerta-urgente .badge-alerta {
+    background-color: #dc3545; /* Badge vermelho vivo */
+    color: white;
+}
+.alerta-urgente .btn-fechar-alerta {
+    color: #721c24;
+}
+
+/* ℹ️ 2. ALERTA INFORMATIVO (Azul) */
+.alerta-informativo {
+    background-color: #d1ecf1; /* Fundo azul claro suave */
+    color: #0c5460;            /* Texto azul escuro para leitura */
+    border-bottom: 3px solid #17a2b8;
+}
+.alerta-informativo .badge-alerta {
+    background-color: #17a2b8; /* Badge azul institucional */
+    color: white;
+}
+.alerta-informativo .btn-fechar-alerta {
+    color: #0c5460;
+}
+
+/* ✅ 3. ALERTA DE CONCLUÍDO / SUCESSO (Verde) */
+.alerta-sucesso {
+    background-color: #d4edda; /* Fundo verde claro suave */
+    color: #155724;            /* Texto verde escuro para leitura */
+    border-bottom: 3px solid #28a745;
+}
+.alerta-sucesso .badge-alerta {
+    background-color: #28a745; /* Badge verde positivo */
+    color: white;
+}
+.alerta-sucesso .btn-fechar-alerta {
+    color: #155724;
+}
