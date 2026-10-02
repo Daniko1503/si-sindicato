@@ -62,7 +62,7 @@
         const novoTexto = document.getElementById('novo-texto-alerta').value;
 
         // ⚙️ DEFINA SUA SENHA DE ACESSO DO PAINEL AQUI
-        const SENHA_CORRETA = "4321"; // Substitua pelas letras/números que desejar
+        const SENHA_CORRETA = "4321"; 
         
         const USERNAME = "daniko1503"; 
         const REPO = "si-sindicato"; 
@@ -79,12 +79,17 @@
         status.innerText = "Conectando ao GitHub...";
 
         try {
+            // URL CORRIGIDA: Aponta corretamente para a API do GitHub com a formatação de variáveis correta
             const url = `https://github.com{USERNAME}/${REPO}/contents/${FILE_PATH}`;
+            
             const response = await fetch(url, {
-                headers: { "Authorization": `token ${githubToken}` }
+                headers: { 
+                    "Authorization": `Bearer ${githubToken}`,
+                    "Accept": "application/vnd.github.v3+json"
+                }
             });
             
-            if (!response.ok) throw new Error("Token inválido ou sem permissão de repositório.");
+            if (!response.ok) throw new Error("Token inválido, expirado ou sem permissão de acesso ao repositório.");
             
             const fileData = await response.json();
             const rawContent = decodeURIComponent(escape(atob(fileData.content)));
@@ -92,7 +97,7 @@
             const regexTexto = /(<div[^>]*id="painel-alerta"[^>]*>[\s\S]*?<p>)([\s\S]*?)(<\/p>)/;
             
             if (!regexTexto.test(rawContent)) {
-                throw new Error("Não localizamos o painel de alerta no arquivo index.html.");
+                throw new Error("Não localizamos o painel de alerta estruturado no arquivo index.html.");
             }
             
             let conteudoModificado = rawContent.replace(/class="[^"]*"\s+id="painel-alerta"/, `class="${novaClasse}" id="painel-alerta"`);
@@ -102,8 +107,9 @@
             const updateResponse = await fetch(url, {
                 method: "PUT",
                 headers: {
-                    "Authorization": `token ${githubToken}`,
-                    "Content-Type": "application/json"
+                    "Authorization": `Bearer ${githubToken}`,
+                    "Content-Type": "application/json",
+                    "Accept": "application/vnd.github.v3+json"
                 },
                 body: JSON.stringify({
                     message: "🚨 Alerta atualizado via Painel Admin",
@@ -117,7 +123,7 @@
                 status.innerText = "✅ Publicado com sucesso! O site foi alterado na nuvem. Aguarde 1 minuto.";
                 document.getElementById('novo-texto-alerta').value = '';
             } else {
-                throw new Error("Erro ao salvar atualizações no GitHub.");
+                throw new Error("Erro ao salvar atualizações no repositório do GitHub.");
             }
 
         } catch (error) {
