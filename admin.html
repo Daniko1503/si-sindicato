@@ -80,7 +80,7 @@
 
         try {
             // URL CORRIGIDA: Aponta corretamente para a API do GitHub com a formatação de variáveis correta
-            const url = `https://github.com{USERNAME}/${REPO}/contents/${FILE_PATH}`;
+            const url = `https://github.com${USERNAME}/${REPO}/contents/${FILE_PATH}`;
             
             const response = await fetch(url, {
                 headers: { 
