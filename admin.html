@@ -1,4 +1,7 @@
 <script>
+// Aguarda a página HTML carregar completamente antes de rodar o script
+document.addEventListener('DOMContentLoaded', function() {
+    
     document.getElementById('form-github-alerta').addEventListener('submit', async function(e) {
         e.preventDefault();
         
@@ -40,16 +43,13 @@
             const fileData = await response.json();
             const rawContent = decodeURIComponent(escape(atob(fileData.content)));
             
-            // Define os rótulos de texto baseados na escolha do seletor
             let rotulo = "URGENTE";
             if (novaClasse === "alerta-informativo") rotulo = "INFORMAÇÃO";
             if (novaClasse === "alerta-sucesso") rotulo = "AVISO";
 
-            // Nova estrutura limpa gerada dinamicamente
             const novoBlocoAlerta = `<!-- PAINEL DE AVISOS URGENTES -->\n<div class="${novaClasse}" id="painel-alerta">\n    <div class="container alerta-content">\n        <span class="badge-alerta">${rotulo}</span>\n        <p>${novoTexto}</p>\n    </div>\n</div>`;
                                   
-            // Regex flexível que captura o comentário e a div inteira do painel-alerta
-            const regexPainelCompleto = /<!-- PAINEL DE AVISOS URGENTES -->[\s\S]*?<div[^>]*id="painel-alerta"[\s\S]*?<\/div>\s*<\/div>/;
+            const regexPainelCompleto = /<!-- PAINEL DE AVISOS URGENTES -->[\s\(\S\)]*?<div[^>]*id="painel-alerta"[\s\(\S\)]*?<\/div>\s*<\/div>/;
             
             if (!regexPainelCompleto.test(rawContent)) {
                 throw new Error("Não localizamos o comentário e a estrutura 'painel-alerta' no index.html.");
@@ -86,4 +86,6 @@
             btn.disabled = false;
         }
     });
+
+}); // Fim do DOMContentLoaded
 </script>
