@@ -725,3 +725,41 @@ footer h3, footer h4 {
 .alerta-sucesso .btn-fechar-alerta {
     color: #155724;
 }
+/* Base Comum do Alerta */
+#painel-alerta {
+    padding: 15px;
+    margin: 0;
+    border-radius: 0; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.alerta-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.badge-alerta {
+    color: white;
+    padding: 4px 8px;
+    font-weight: bold;
+    font-size: 12px;
+    border-radius: 3px;
+}
+
+#painel-alerta p {
+    margin: 0;
+    font-weight: bold;
+}
+
+/* variação 1: VERMELHO (Urgente) */
+.alerta-urgente { background-color: #f8d7da; border-bottom: 4px solid #dc3545; color: #721c24; }
+.alerta-urgente .badge-alerta { background-color: #dc3545; }
+
+/* variação 2: AZUL (Informativo) */
+.alerta-informativo { background-color: #cce5ff; border-bottom: 4px solid #004085; color: #004085; }
+.alerta-informativo .badge-alerta { background-color: #004085; }
+
+/* variação 3: VERDE (Sucesso) */
+.alerta-sucesso { background-color: #d4edda; border-bottom: 4px solid #28a745; color: #155724; }
+.alerta-sucesso .badge-alerta { background-color: #28a745; }
