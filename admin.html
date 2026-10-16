@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
         status.innerText = "Conectando ao GitHub...";
 
         try {
-            const url = `https://github.com{USERNAME}/${REPO}/contents/${FILE_PATH}`;
+            const url = `https://github.com${USERNAME}/${REPO}/contents/${FILE_PATH}`;
             
             const response = await fetch(url, {
                 headers: { 
